@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SELOV - Facebook Share Booster</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --neon-pink:#ff0a6c;--neon-cyan:#00f3ff;--neon-lime:#b3ff00;
+  --neon-purple:#b100e8;--neon-yellow:#ffd500;--neon-red:#ff1e1e;
+  --dark-bg:#05050F;--card-bg:#0A0A18;--glass-edge:rgba(255,255,255,0.03);
+  --text-dim:#8A8AA8;--text-bright:#E0E0FF;
+}
+html{font-size:14px;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Inter',sans-serif;font-weight:400;
+  background:var(--dark-bg);color:var(--text-bright);
+  overflow:hidden;width:100%;max-width:100vw;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.bg-base{
+  position:fixed;inset:0;z-index:0;
+  background:radial-gradient(circle at 20% 40%, rgba(0,243,255,0.08) 0%, rgba(5,5,15,0.98) 70%),
+             repeating-linear-gradient(45deg, rgba(255,10,108,0.02) 0px, rgba(255,10,108,0.02) 2px, transparent 2px, transparent 8px);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(0,243,255,0.12) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(0,243,255,0.12) 1px, transparent 1px);
+  background-size:35px 35px;
+  mask-image:radial-gradient(circle at 60% 30%, black 30%, transparent 85%);
+}
+.pulse-aurora{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 30% 70%, rgba(177,0,232,0.12), transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,243,255,0.1), transparent 55%);
+  filter:blur(55px);
+}
+.scan-glow{
+  position:fixed;top:0;left:-100%;width:200%;height:100%;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(0,243,255,0.08), transparent);
+  animation:scanHorizon 8s linear infinite;
+}
+@keyframes scanHorizon{0%{transform:translateX(-50%)}100%{transform:translateX(50%)}}
+.corner-el{
+  position:fixed;z-index:20;pointer-events:none;width:70px;height:70px;
+}
+.corner-tl{top:12px;left:12px;border-top:2px solid var(--neon-pink);border-left:2px solid var(--neon-pink);filter:drop-shadow(0 0 6px var(--neon-pink));}
+.corner-br{bottom:12px;right:12px;border-bottom:2px solid var(--neon-cyan);border-right:2px solid var(--neon-cyan);filter:drop-shadow(0 0 6px var(--neon-cyan));}
+
+.wrap{height:100dvh;overflow-y:auto;scrollbar-width:none;position:relative;z-index:10;padding-bottom:80px}
+.wrap::-webkit-scrollbar{display:none}
+
+.neon-pink{color:var(--neon-pink);text-shadow:0 0 5px var(--neon-pink);}
+.neon-cyan{color:var(--neon-cyan);text-shadow:0 0 5px var(--neon-cyan);}
+.neon-lime{color:var(--neon-lime);text-shadow:0 0 5px var(--neon-lime);}
+.neon-purple{color:var(--neon-purple);text-shadow:0 0 5px var(--neon-purple);}
+.gradient-text{
+  background:linear-gradient(135deg, var(--neon-pink), var(--neon-cyan), var(--neon-purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-weight:800;
+}
+
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:rgba(5,5,15,0.78);backdrop-filter:blur(28px);
+  border-bottom:1px solid rgba(0,243,255,0.2);
+}
+.hdr-glow-bar{height:2px;background:linear-gradient(90deg, var(--neon-pink), var(--neon-cyan), var(--neon-purple), var(--neon-pink));background-size:200% auto;animation:flowGradient 3s linear infinite;}
+@keyframes flowGradient{0%{background-position:0%}100%{background-position:200%}}
+.hdr-body{padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center}
+.logo-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.5px}
+.logo-sub{font-size:0.55rem;font-weight:500;letter-spacing:2px;color:var(--neon-cyan);opacity:0.8}
+.live-badge{display:flex;align-items:center;gap:7px}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--neon-lime);box-shadow:0 0 12px var(--neon-lime);animation:pulseExpand 1.4s infinite}
+@keyframes pulseExpand{0%{opacity:0.4;transform:scale(0.7)}100%{opacity:1;transform:scale(1.4)}}
+.ver-chip{padding:4px 12px;background:rgba(0,243,255,0.12);border-radius:30px;font-size:0.55rem;font-weight:600;border:1px solid var(--neon-cyan);}
+
+.ticker{overflow:hidden;white-space:nowrap;padding:6px 0;background:rgba(0,0,0,0.6);border-top:1px solid rgba(255,10,108,0.3);border-bottom:1px solid rgba(0,243,255,0.2);}
+.ticker-track{display:inline-block;animation:tickerMove 20s linear infinite;}
+.tick-el{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:0.65rem;font-weight:500;padding:0 24px}
+@keyframes tickerMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+.sec{display:none;padding:1.2rem;animation:fadeScaleUp 0.4s cubic-bezier(0.2,0.9,0.4,1.1) both}
+.sec.act{display:block}
+@keyframes fadeScaleUp{from{opacity:0;transform:scale(0.96) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.glass-panel{
+  background:rgba(10,10,24,0.65);backdrop-filter:blur(20px);
+  border:1px solid rgba(0,243,255,0.2);border-radius:28px;
+  box-shadow:0 20px 35px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.stats-flex{display:flex;gap:0.9rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.stat-card{
+  flex:1;background:rgba(5,5,20,0.7);border-radius:24px;padding:1rem;
+  border-left:3px solid var(--neon-pink);backdrop-filter:blur(8px);
+}
+.stat-number{font-family:'Space Grotesk',sans-serif;font-size:2.3rem;font-weight:700;line-height:1;margin:8px 0 4px}
+.stat-label{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim)}
+
+.sys-indicator{
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,0.45);border-radius:40px;padding:8px 16px;margin-bottom:1.2rem;
+  border:1px solid rgba(179,255,0,0.25);
+}
+
+.form-card{padding:1.5rem;margin-bottom:1.5rem}
+.input-group{margin-bottom:1.2rem}
+.input-label{font-size:0.65rem;font-weight:600;text-transform:uppercase;margin-bottom:8px;display:block;letter-spacing:1.5px}
+.input-field{
+  width:100%;padding:14px 16px;background:rgba(2,2,8,0.8);border:1px solid rgba(0,243,255,0.35);
+  border-radius:20px;color:white;font-family:'Inter',sans-serif;font-size:0.9rem;
+  transition:all 0.2s;outline:none;
+}
+.input-field:focus{border-color:var(--neon-pink);box-shadow:0 0 0 3px rgba(255,10,108,0.2)}
+textarea.input-field{min-height:90px;resize:none}
+.row-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.boost-button{
+  width:100%;padding:0;background:linear-gradient(90deg, var(--neon-pink), var(--neon-purple), var(--neon-cyan));
+  background-size:200% auto;border:none;border-radius:40px;margin-top:1rem;
+  cursor:pointer;transition:transform 0.2s;
+}
+.boost-button:active{transform:scale(0.97)}
+.button-inner{
+  background:rgba(2,2,12,0.9);margin:2px;border-radius:38px;padding:14px;
+  display:flex;justify-content:center;align-items:center;gap:12px;
+  font-weight:800;font-size:0.9rem;letter-spacing:3px;color:white;
+}
+
+.session-list{margin-top:0.5rem}
+.session-item{
+  background:rgba(8,8,22,0.7);border-radius:20px;padding:1rem;margin-bottom:12px;
+  border-left:4px solid var(--neon-cyan);
+}
+.session-item.error-border{border-left-color:var(--neon-red)}
+.session-item.done-border{border-left-color:var(--neon-lime)}
+.progress-bar-bg{height:4px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));border-radius:10px;width:0%}
+.error-message{margin-top:8px;font-size:0.7rem;color:var(--neon-red);background:rgba(255,30,30,0.08);padding:6px 10px;border-radius:16px}
+
+.nav-bar{
+  position:fixed;bottom:12px;left:12px;right:12px;z-index:60;
+  background:rgba(5,5,20,0.85);backdrop-filter:blur(28px);
+  border-radius:60px;border:1px solid rgba(0,243,255,0.2);
+}
+.nav-flex{display:flex;justify-content:space-evenly;padding:6px 0}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;color:rgba(255,255,255,0.3);
+  font-size:0.6rem;font-weight:600;padding:8px 0;cursor:pointer;
+  transition:all 0.2s;border-radius:40px;
+}
+.nav-item.active{color:var(--neon-cyan);background:rgba(0,243,255,0.08);}
+.nav-icon{width:24px;height:24px;}
+
+.toast-host{position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:300;width:90%;max-width:340px;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-msg{background:rgba(0,0,0,0.85);backdrop-filter:blur(16px);border:1px solid var(--neon-cyan);border-radius:60px;padding:12px 20px;color:white;font-weight:500;animation:toastPop 0.25s ease}
+@keyframes toastPop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="bg-base"></div>
+<div class="pulse-aurora"></div>
+<div class="bg-grid"></div>
+<div class="scan-glow"></div>
+<div class="corner-el corner-tl"></div>
+<div class="corner-el corner-br"></div>
+
+<div id="toast-container" class="toast-host"></div>
+
+<div class="wrap">
+  <header class="hdr">
+    <div class="hdr-glow-bar"></div>
+    <div class="hdr-body">
+      <div>
+        <div class="logo-title gradient-text"> SELOV SHAREBOOST</div>
+        <div class="logo-sub">✦ SELOV ✦</div>
+      </div>
+      <div>
+        <div class="live-badge" style="justify-content:flex-end">
+          <div class="pulse-dot"></div>
+          <span style="font-weight:600;font-size:0.65rem" class="neon-lime">LIVE</span>
+        </div>
+        <div class="ver-chip">v6.0</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="tick-el neon-pink">⚡ SELOV SHARE</span>
+      <span class="tick-el neon-cyan">🌀 API READY</span>
+      <span class="tick-el neon-lime">⚡ REAL-TIME BOOST</span>
+      <span class="tick-el neon-purple">💜 FACEBOOK ENGINE</span>
+      <span class="tick-el neon-yellow">🔥 ACTIVE</span>
+      <span class="tick-el neon-pink">⚡ SELOV SHARE</span>
+    </div>
+  </div>
+
+  <section id="sec-home" class="sec act">
+    <div class="sys-indicator">
+      <div class="sys-status">🟢 BACKEND: ONLINE</div>
+      <div class="sys-time" id="uptimeDisplay">READY</div>
+    </div>
+
+    <div class="stats-flex">
+      <div class="stat-card"><div class="stat-label">ACTIVE SESSIONS</div><div class="stat-number neon-pink" id="stat-sessions">0</div></div>
+      <div class="stat-card"><div class="stat-label">TOTAL BOOSTS</div><div class="stat-number neon-cyan" id="stat-total">0</div></div>
+    </div>
+
+    <form id="shareForm" class="glass-panel form-card" onsubmit="return false">
+      <div class="gradient-text" style="text-align:center;margin-bottom:1.5rem;font-weight:700">⟡ BOOST CONFIGURATION ⟡</div>
+      
+      <div class="input-group">
+        <div class="input-label"><span class="neon-yellow">🔐 FACEBOOK COOKIE</span></div>
+        <textarea id="cookieInput" class="input-field" placeholder="Paste your Facebook cookie string here..."></textarea>
+      </div>
+      
+      <div class="input-group">
+        <div class="input-label"><span class="neon-cyan">🌐 POST URL</span></div>
+        <input type="url" id="urlInput" class="input-field" placeholder="https://www.facebook.com/...">
+      </div>
+      
+      <div class="row-2col">
+        <div class="input-group"><div class="input-label"><span class="neon-purple">⚡ AMOUNT</span></div><input type="number" id="amountInput" class="input-field" placeholder="1-100" min="1" max="100"></div>
+        <div class="input-group"><div class="input-label"><span class="neon-lime">⏱️ DELAY (sec)</span></div><input type="number" id="intervalInput" class="input-field" placeholder="5" min="1"></div>
+      </div>
+      
+      <button class="boost-button" id="submitBtn" type="submit">
+        <div class="button-inner">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          START BOOST
+        </div>
+      </button>
+    </form>
+
+    <div class="neon-cyan" style="margin-bottom:0.8rem;font-weight:600">📋 RECENT SESSIONS</div>
+    <div id="homeSessions" class="session-list"></div>
+  </section>
+
+  <section id="sec-sessions" class="sec">
+    <div style="background:rgba(0,243,255,0.06);border-radius:30px;padding:12px 18px;margin-bottom:1rem;display:flex;justify-content:space-between">
+      <span style="font-weight:700">📡 ALL SESSIONS</span>
+      <span class="neon-cyan" id="globalLiveCount">0 LIVE</span>
+    </div>
+    <div id="allSessions" class="session-list"></div>
+  </section>
+
+  <section id="sec-about" class="sec">
+    <div class="glass-panel" style="padding:2rem 1.5rem;text-align:center">
+      <div class="gradient-text" style="font-size:2rem;font-weight:800;">SHAREBOOST</div>
+      <div style="margin:12px 0;padding:6px 18px;background:rgba(0,243,255,0.15);border-radius:50px;display:inline-block;font-weight:600">V6 BACKEND EDITION</div>
+      <p style="margin-top:1rem;line-height:1.6">Powered by Node.js backend. Automates Facebook shares with real-time session tracking.</p>
+      <div style="margin-top:1.5rem;background:rgba(255,213,0,0.05);border-radius:22px;padding:1rem;border-left:3px solid var(--neon-yellow);text-align:left">
+        <div><span class="neon-yellow">⚠️</span> <strong>WARNING</strong></div>
+        <div style="font-size:0.75rem;margin-top:5px">Use responsibly. High frequency may trigger rate limits. Recommended delay >30s.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-flex">
+    <button class="nav-item active" data-target="sec-home"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span>HOME</span></button>
+    <button class="nav-item" data-target="sec-sessions"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/></svg><span>SESSIONS</span></button>
+    <button class="nav-item" data-target="sec-about"><svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>SYSTEM</span></button>
+  </div>
+</nav>
+
+<script>
+let sessions = [];
+let totalCompleted = 0;
+let sessionIdCounter = 0;
+
+function showToast(msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.innerHTML = `<span style="margin-right:8px">${type === 'error' ? '❌' : '✅'}</span>${msg}`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 2800);
+}
+
+function updateStats() {
+    document.getElementById('stat-sessions').innerText = sessions.filter(s => s.status === 'active').length;
+    document.getElementById('stat-total').innerText = totalCompleted;
+    document.getElementById('globalLiveCount').innerText = sessions.filter(s => s.status === 'active').length;
+    renderHomeSessions();
+    renderAllSessions();
+}
+
+function renderHomeSessions() {
+    const container = document.getElementById('homeSessions');
+    const recent = [...sessions].reverse().slice(0, 5);
+    container.innerHTML = recent.map(s => renderSessionCard(s)).join('') || '<div class="session-item" style="text-align:center;opacity:0.7">✨ No active sessions — start a boost</div>';
+}
+
+function renderAllSessions() {
+    const container = document.getElementById('allSessions');
+    container.innerHTML = sessions.map(s => renderSessionCard(s)).join('') || '<div class="session-item" style="text-align:center;">📭 No sessions yet</div>';
+}
+
+function renderSessionCard(s) {
+    let badgeClass = '', badgeText = 'ACTIVE', statusIcon = '⚡';
+    if (s.status === 'error') { badgeClass = 'error-border'; badgeText = 'FAILED'; statusIcon = '❌'; }
+    else if (s.status === 'done') { badgeClass = 'done-border'; badgeText = 'COMPLETED'; statusIcon = '✅'; }
+    
+    return `<div class="session-item ${badgeClass}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:0.6rem;color:#8A8AA8">#${s.id}</span>
+            <span style="font-size:0.55rem;padding:3px 10px;border-radius:30px;background:rgba(0,243,255,0.1)">${statusIcon} ${badgeText}</span>
+        </div>
+        <div style="font-size:0.75rem;word-break:break-all;margin-bottom:8px">${escapeHtml(s.url.substring(0, 60))}...</div>
+        <div class="progress-bar-bg"><div class="progress-fill" style="width:${s.progress || 0}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.6rem;margin-top:6px">
+            <span>📊 ${s.currentExecuted || 0}/${s.totalAmount}</span>
+            <span>⏱️ ${s.delay}s delay</span>
+        </div>
+        ${s.errorMsg ? `<div class="error-message">⚠️ ${escapeHtml(s.errorMsg)}</div>` : ''}
+    </div>`;
+}
+
+function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
+
+async function execShare(session) {
+    if (session.status !== 'active') return;
+    
+    for (let i = 1; i <= session.totalAmount; i++) {
+        if (session.status !== 'active') break;
+        
+        session.currentExecuted = i;
+        session.progress = (i / session.totalAmount) * 100;
+        updateStats();
+        
+        try {
+            const response = await fetch('/api/share', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cookie: session.cookie,
+                    url: session.url,
+                    amount: 1,
+                    interval: session.delay
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Share failed');
+            }
+            
+            totalCompleted++;
+            updateStats();
+            showToast(`Share #${i} completed for session ${session.id}`, 'success');
+            
+        } catch (error) {
+            session.status = 'error';
+            session.errorMsg = error.message;
+            updateStats();
+            showToast(`Session ${session.id} failed: ${error.message}`, 'error');
+            return;
+        }
+        
+        if (i !== session.totalAmount) {
+            await new Promise(r => setTimeout(r, session.delay * 1000));
+        }
+    }
+    
+    if (session.status === 'active') {
+        session.status = 'done';
+        updateStats();
+        showToast(`✅ Session #${session.id} completed: ${session.totalAmount} shares sent!`, 'success');
+    }
+}
+
+document.getElementById('shareForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const cookie = document.getElementById('cookieInput').value.trim();
+    const url = document.getElementById('urlInput').value.trim();
+    const amount = parseInt(document.getElementById('amountInput').value) || 1;
+    const delay = parseInt(document.getElementById('intervalInput').value) || 5;
+    
+    if (!cookie || !url) {
+        showToast('❌ Cookie and URL are required', 'error');
+        return;
+    }
+    
+    if (amount < 1 || amount > 100) {
+        showToast('❌ Amount must be between 1 and 100', 'error');
+        return;
+    }
+    
+    const id = ++sessionIdCounter;
+    const newSession = {
+        id, cookie, url,
+        totalAmount: amount,
+        delay: delay,
+        status: 'active',
+        progress: 0,
+        currentExecuted: 0,
+        errorMsg: null
+    };
+    
+    sessions.push(newSession);
+    updateStats();
+    showToast(`🚀 Session #${id} started: ${amount} shares queued`, 'success');
+    execShare(newSession);
+    
+    document.getElementById('cookieInput').value = '';
+    document.getElementById('urlInput').value = '';
+});
+
+// Navigation
+document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        document.querySelectorAll('.sec').forEach(sec => sec.classList.remove('act'));
+        document.getElementById(targetId).classList.add('act');
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+setInterval(() => {
+    const uptimeElem = document.getElementById('uptimeDisplay');
+    if (uptimeElem) uptimeElem.innerText = '🟢 SYSTEM READY';
+}, 1000);
+</script>
+</body>
+</html>
